@@ -24,8 +24,8 @@ class Vector
         inline std::size_t get_Rate() const;
         inline void        set_Rate(const std::size_t& rate);
 
-        T                 operator[](const std::size_t& index) const;
-        const Vector<T>&  operator=(const Vector<T>& v);
+        T          operator[](const std::size_t& index) const;
+        Vector<T>& operator=(const Vector<T>& v);
 
     private:        
         std::size_t size;                        //capacity of v
@@ -161,7 +161,7 @@ T Vector<T>::operator[](const std::size_t& index) const
 }
 
 template<typename T>
-const Vector<T>& Vector<T>::operator=(const Vector<T>& v)
+Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
     size  = v.size;
     count = v.count;
