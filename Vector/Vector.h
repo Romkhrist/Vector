@@ -11,21 +11,24 @@ class Vector
     public:
         Vector(const std::size_t size = 5);
         Vector(const Vector<T>& v);
+        Vector(Vector<T>&& v);
 
         ~Vector();
 
         void push_back(const T& value);
         void pop_back();
         void insert(const std::size_t& index, const T& value);
-        void reserve(const std::size_t& size);
+        void reserve(const std::size_t& size); 
         
         inline std::size_t length() const;
         inline std::size_t capacity() const;
-        inline std::size_t get_Rate() const;
-        inline void        set_Rate(const std::size_t& rate);
+        inline std::size_t getRate() const;
+        inline void        setRate(const std::size_t& rate);
+        inline bool        isEmpty() const;
 
-        T          operator[](const std::size_t& index) const;
+        T&         operator[](const std::size_t& index) const;
         Vector<T>& operator=(const Vector<T>& v);
+        Vector<T>& operator=(Vector<T>&& v); 
 
     private:        
         std::size_t size;                        //capacity of v
@@ -52,6 +55,14 @@ Vector<T>::Vector(const Vector<T>& v)
 {
     arr = new T[size];
     memmove(arr, v.arr, sizeof(T) * count);
+}
+
+template<typename T>
+Vector<T>::Vector(Vector<T>&& v)
+    :size(v.size), count(v.count), rate(v.rate)
+{
+    arr = v.arr;
+    v.arr = nullptr;
 }
 
 template<typename T>
@@ -115,7 +126,9 @@ void Vector<T>::reserve(const std::size_t& size)
     
     this->size = size;
     T *new_arr = new T[size];
+    
     memmove(new_arr, arr, sizeof(T) * count);
+    
     delete arr;
     arr = new_arr;
 }
@@ -133,13 +146,13 @@ inline std::size_t Vector<T>::capacity() const
 }
 
 template<typename T>
-inline std::size_t Vector<T>::get_Rate() const
+inline std::size_t Vector<T>::getRate() const
 {
     return rate;
 }
 
 template<typename T>
-inline void Vector<T>::set_Rate(const std::size_t& rate)
+inline void Vector<T>::setRate(const std::size_t& rate)
 {
     if(rate <= 0)
     {
@@ -150,7 +163,13 @@ inline void Vector<T>::set_Rate(const std::size_t& rate)
 }
 
 template<typename T>
-T Vector<T>::operator[](const std::size_t& index) const
+inline bool Vector<T>::isEmpty() const
+{
+    return !count;
+}
+
+template<typename T>
+T& Vector<T>::operator[](const std::size_t& index) const
 {
     if(index >= count)
     {
@@ -163,12 +182,36 @@ T Vector<T>::operator[](const std::size_t& index) const
 template<typename T>
 Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
+    if(this == &v)
+    {
+        return *this;
+    }
+    
     size  = v.size;
     count = v.count;
+    rate  = v.rate;
     
     delete[] arr;
     arr = new T[size];
     memmove(arr, v.arr, count * sizeof(T));
+    
+    return *this;
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(Vector<T>&& v)
+{
+    if(this == &v)
+    {
+        return *this;
+    }
+    
+    size  = v.size;
+    count = v.count;
+    rate  = v.rate;
+    arr   = v.arr;
+    
+    v.arr = nullptr;
     
     return *this;
 }
